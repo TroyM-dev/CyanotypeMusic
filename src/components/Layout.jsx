@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Music2, Mic2, Sparkles, History } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useState, useEffect } from 'react';
 
 export default function Layout({ children }) {
   const location = useLocation();
@@ -36,6 +38,11 @@ export default function Layout({ children }) {
                 <span className="hidden sm:inline">{label}</span>
               </Link>
             ))}
+            <button
+              onClick={() => base44.auth.redirectToLogin()}
+              className="ml-2 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-all">
+              Sign In
+            </button>
           </div>
         </div>
       </nav>
