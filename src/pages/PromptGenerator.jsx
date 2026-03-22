@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Sparkles, Copy, Check, RotateCcw } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Sparkles, FolderOpen } from 'lucide-react';
 import Layout from '../components/Layout';
 import { base44 } from '@/api/base44Client';
 
@@ -9,6 +9,7 @@ const MOODS = ['Euphoric', 'Melancholic', 'Tense', 'Peaceful', 'Aggressive', 'No
 const TEMPOS = ['Very Slow (< 60 BPM)', 'Slow (60–80 BPM)', 'Moderate (80–100 BPM)', 'Upbeat (100–130 BPM)', 'Fast (130–160 BPM)', 'Very Fast (160+ BPM)'];
 
 export default function PromptGenerator() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     genre: '',
     mood: '',
@@ -18,15 +19,20 @@ export default function PromptGenerator() {
     description: '',
     purpose: '',
   });
-  const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState('');
+
+  useEffect(() => {
+    base44.entities.Project.list('-created_date').then(setProjects);
+  }, []);
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
+  const buildTitle = () => [form.genre, form.mood, form.purpose].filter(Boolean).join(' · ') || 'Generated Prompt';
+
   const generate = async () => {
     setLoading(true);
-    setResult('');
     const prompt = `You are an expert music producer and creative director. Based on the following directions, generate a richly detailed, actionable music production prompt that a musician or producer could use as a creative brief or feed into an AI music tool.
 
 Details:
@@ -38,17 +44,17 @@ Details:
 - Additional Description: ${form.description || 'None'}
 - Purpose/Context: ${form.purpose || 'Not specified'}
 
-Generate a detailed, inspiring, and technically specific music prompt. Cover elements like: sonic texture, arrangement structure, key/scale suggestions, production techniques, atmosphere, dynamics, and any other relevant musical details. Be vivid and precise. Format it as a flowing, professional creative brief.`;
+Generate a detailed, inspiring, and technically specific music prompt. Use markdown formatting with clear headings (##) for sections like Overview, Sonic Palette, Arrangement, Production Techniques, Mood & Atmosphere, etc. Be vivid and precise. Format it as a flowing, professional creative brief.`;
 
     const res = await base44.integrations.Core.InvokeLLM({ prompt });
-    setResult(res);
+    const record = await base44.entities.PromptRecord.create({
+      title: buildTitle(),
+      project_id: selectedProject || undefined,
+      result: res,
+      ...form,
+    });
     setLoading(false);
-  };
-
-  const copy = () => {
-    navigator.clipboard.writeText(result);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigate(`/prompt-result/${record.id}`);
   };
 
   const canGenerate = form.genre || form.mood || form.description;
@@ -138,6 +144,21 @@ Generate a detailed, inspiring, and technically specific music prompt. Cover ele
             className="w-full bg-card border border-border/60 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all" />
         </div>
 
+        {/* Project selector */}
+        {projects.length > 0 && (
+          <div className="mb-4">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Add to Project <span className="normal-case text-muted-foreground/50">(optional)</span></label>
+            <div className="relative">
+              <FolderOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <select value={selectedProject} onChange={e => setSelectedProject(e.target.value)}
+                className="w-full bg-card border border-border/60 rounded-xl pl-10 pr-4 py-3 text-sm text-foreground focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all appearance-none">
+                <option value="">No project</option>
+                {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+            </div>
+          </div>
+        )}
+
         <button onClick={generate} disabled={!canGenerate || loading}
           className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3.5 rounded-xl transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed">
           {loading ? (
@@ -146,30 +167,6 @@ Generate a detailed, inspiring, and technically specific music prompt. Cover ele
             <><Sparkles className="w-4 h-4" />Generate Prompt</>
           )}
         </button>
-
-        {/* Result */}
-        {result && (
-          <div className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 relative">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-medium text-amber-400 uppercase tracking-wider">Your Music Prompt</span>
-              <div className="flex gap-2">
-                <button onClick={() => { setResult(''); setForm({ genre:'', mood:'', tempo:'', instruments:'', references:'', description:'', purpose:'' }); }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground border border-border/60 hover:border-border transition-all">
-                  <RotateCcw className="w-3 h-3" /> Reset
-                </button>
-                <button onClick={copy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
-                  {copied ? <><Check className="w-3 h-3" />Copied!</> : <><Copy className="w-3 h-3" />Copy</>}
-                </button>
-              </div>
-            </div>
-            <ReactMarkdown
-              className="text-sm text-foreground/90 leading-relaxed prose prose-sm max-w-none prose-invert prose-headings:text-amber-300 prose-headings:font-semibold prose-headings:mt-5 prose-headings:mb-2 prose-p:my-2 prose-strong:text-foreground prose-ul:my-2 prose-li:my-0.5 prose-hr:border-border/40"
-            >
-              {result}
-            </ReactMarkdown>
-          </div>
-        )}
       </div>
     </Layout>
   );
