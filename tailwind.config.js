@@ -6,6 +6,7 @@ module.exports = {
   	extend: {
       fontFamily: {
         inter: ['var(--font-inter)'],
+        orbitron: ['var(--font-orbitron)'],
       },
   		borderRadius: {
   			lg: 'var(--radius)',

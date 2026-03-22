@@ -19,7 +19,7 @@ export default function Layout({ children }) {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
             <img src="https://media.base44.com/images/public/69c040c501b7e16b8b8abd70/cdeb8be9e_WeixinImage_20260322173930_20_35.jpg" alt="Cyanide Music" className="h-9 w-9 rounded-lg object-cover" />
-            <span className="font-semibold text-lg tracking-tight text-foreground">Cyanide <span className="text-primary">Music</span></span>
+            <span className="font-orbitron font-semibold text-lg tracking-tight text-foreground">Cyanide <span className="text-primary">Music</span></span>
           </Link>
           <div className="flex items-center gap-1">
             {navLinks.map(({ to, label, icon: Icon }) => (
