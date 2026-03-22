@@ -12,6 +12,8 @@
     --card-foreground: 222 30% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 30% 10%;
+    --primary: 225 80% 50%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 220 20% 92%;
     --secondary-foreground: 222 30% 25%;
     --muted: 220 20% 92%;
@@ -20,8 +22,8 @@
     --accent-foreground: 0 0% 100%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 222 24% 18%;
-    --input: 222 24% 16%;
+    --border: 220 20% 85%;
+    --input: 220 20% 92%;
     --ring: 225 80% 50%;
     --radius: 0.75rem;
     --font-inter: 'Inter', sans-serif;
