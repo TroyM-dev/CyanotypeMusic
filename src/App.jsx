@@ -8,6 +8,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Home from './pages/Home';
 import PromptGenerator from './pages/PromptGenerator';
 import AudioFeedback from './pages/AudioFeedback';
+import PromptResult from './pages/PromptResult';
+import PromptHistory from './pages/PromptHistory';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -38,6 +40,8 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Home />} />
       <Route path="/prompt-generator" element={<PromptGenerator />} />
       <Route path="/audio-feedback" element={<AudioFeedback />} />
+      <Route path="/prompt-result/:id" element={<PromptResult />} />
+      <Route path="/history" element={<PromptHistory />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

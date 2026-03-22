@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Music2, Mic2, Sparkles } from 'lucide-react';
+import { Music2, Mic2, Sparkles, History } from 'lucide-react';
 
 export default function Layout({ children }) {
   const location = useLocation();
@@ -7,6 +7,7 @@ export default function Layout({ children }) {
   const navLinks = [
     { to: '/prompt-generator', label: 'Prompt Generator', icon: Sparkles },
     { to: '/audio-feedback', label: 'Audio Feedback', icon: Mic2 },
+    { to: '/history', label: 'History', icon: History },
   ];
 
   return (
