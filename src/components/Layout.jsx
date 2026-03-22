@@ -18,10 +18,8 @@ export default function Layout({ children }) {
       <nav className="border-b border-border/50 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Music2 className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <span className="font-semibold text-lg tracking-tight text-foreground">Musecraft<span className="text-primary">AI</span></span>
+            <img src="https://media.base44.com/images/public/69c040c501b7e16b8b8abd70/cdeb8be9e_WeixinImage_20260322173930_20_35.jpg" alt="Cyanide Music" className="h-9 w-9 rounded-lg object-cover" />
+            <span className="font-semibold text-lg tracking-tight text-foreground">Cyanide <span className="text-primary">Music</span></span>
           </Link>
           <div className="flex items-center gap-1">
             {navLinks.map(({ to, label, icon: Icon }) => (
