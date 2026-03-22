@@ -83,9 +83,9 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-              <Mic2 className="w-5 h-5 text-violet-400" />
-            </div>
+            <div className="w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center">
+              <Mic2 className="w-5 h-5 text-teal-500" />
+          </div>
             <h1 className="text-2xl font-bold tracking-tight">Audio Feedback</h1>
           </div>
           <p className="text-muted-foreground text-sm">Upload your track and get deep, professional-grade feedback on every aspect of your music.</p>
@@ -97,14 +97,14 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
           onDragOver={e => e.preventDefault()}
           onClick={() => !file && inputRef.current.click()}
           className={`relative rounded-2xl border-2 border-dashed transition-all duration-200 mb-5 ${
-            file ? 'border-violet-500/40 bg-violet-500/5 cursor-default' : 'border-border/60 hover:border-violet-500/40 hover:bg-violet-500/5 cursor-pointer'
+            file ? 'border-teal-500/40 bg-teal-500/5 cursor-default' : 'border-border/60 hover:border-teal-500/40 hover:bg-teal-500/5 cursor-pointer'
           }`}
         >
           <input ref={inputRef} type="file" accept="audio/*" className="hidden" onChange={e => handleFile(e.target.files[0])} />
           {file ? (
             <div className="flex items-center gap-4 px-6 py-5">
-              <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
-                <Mic2 className="w-5 h-5 text-violet-400" />
+              <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center flex-shrink-0">
+                <Mic2 className="w-5 h-5 text-teal-500" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
@@ -134,7 +134,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
           <div className="flex flex-wrap gap-2">
             {FEEDBACK_ASPECTS.map(a => (
               <button key={a} onClick={() => toggleAspect(a)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${aspects.includes(a) ? 'bg-violet-500/20 border-violet-500/40 text-violet-300' : 'border-border/60 text-muted-foreground hover:border-border hover:text-foreground'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${aspects.includes(a) ? 'bg-teal-500/20 border-teal-500/40 text-teal-600' : 'border-border/60 text-muted-foreground hover:border-border hover:text-foreground'}`}>
                 {a}
               </button>
             ))}
@@ -146,7 +146,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Notes for the AI</label>
           <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3}
             placeholder="Tell the AI what you were going for, what you're unsure about, or any specific questions…"
-            className="w-full bg-card border border-border/60 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all resize-none" />
+            className="w-full bg-card border border-border/60 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/20 transition-all resize-none" />
         </div>
 
         <button onClick={analyze} disabled={(!file && !notes) || loading}
@@ -160,16 +160,16 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
 
         {/* Result */}
         {result && (
-          <div className="mt-8 rounded-2xl border border-violet-500/20 bg-violet-500/5 p-6">
+          <div className="mt-8 rounded-2xl border border-teal-500/20 bg-teal-500/5 p-6">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-medium text-violet-400 uppercase tracking-wider">AI Feedback</span>
+              <span className="text-xs font-medium text-teal-500 uppercase tracking-wider">AI Feedback</span>
               <div className="flex gap-2">
                 <button onClick={reset}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground border border-border/60 hover:border-border transition-all">
                   <RotateCcw className="w-3 h-3" /> Reset
                 </button>
                 <button onClick={copy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-violet-300 bg-violet-500/10 border border-violet-500/20 hover:bg-violet-500/20 transition-all">
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-teal-600 bg-teal-500/10 border border-teal-500/20 hover:bg-teal-500/20 transition-all">
                   {copied ? <><Check className="w-3 h-3" />Copied!</> : <><Copy className="w-3 h-3" />Copy</>}
                 </button>
               </div>

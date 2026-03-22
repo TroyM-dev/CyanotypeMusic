@@ -19,9 +19,9 @@ const features = [
     description: 'Upload a track or demo and receive deep, detailed AI feedback on your composition, arrangement, mixing, dynamics, and more — like having a seasoned producer listen alongside you.',
     href: '/audio-feedback',
     cta: 'Get Feedback',
-    gradient: 'from-violet-500/10 to-purple-500/5',
-    accent: 'text-violet-400',
-    border: 'hover:border-violet-500/40',
+    gradient: 'from-teal-500/10 to-cyan-500/5',
+    accent: 'text-teal-500',
+    border: 'hover:border-teal-500/40',
   },
 ];
 
