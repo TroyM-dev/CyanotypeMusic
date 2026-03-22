@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Sparkles, Copy, Check, RotateCcw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import Layout from '../components/Layout';
 import { base44 } from '@/api/base44Client';
 
@@ -162,7 +163,11 @@ Generate a detailed, inspiring, and technically specific music prompt. Cover ele
                 </button>
               </div>
             </div>
-            <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{result}</p>
+            <ReactMarkdown
+              className="text-sm text-foreground/90 leading-relaxed prose prose-sm max-w-none prose-invert prose-headings:text-amber-300 prose-headings:font-semibold prose-headings:mt-5 prose-headings:mb-2 prose-p:my-2 prose-strong:text-foreground prose-ul:my-2 prose-li:my-0.5 prose-hr:border-border/40"
+            >
+              {result}
+            </ReactMarkdown>
           </div>
         )}
       </div>
