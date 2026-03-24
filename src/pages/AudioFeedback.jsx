@@ -76,7 +76,7 @@ Be honest, specific, and genuinely helpful. If limited info is provided, reason 
     setFile(null); setNotes(''); setAspects([]); setResult(''); setError('');
   };
 
-  const loadingMessage = uploading ? 'Uploading audio…' : tier === 'advanced' ? 'Deep analysis with Gemini Pro…' : 'Analyzing your track with Gemini…';
+  const loadingMessage = tier === 'advanced' ? 'Deep analysis with Gemini Pro…' : 'Analyzing your track with Gemini…';
 
   return (
     <Layout>
