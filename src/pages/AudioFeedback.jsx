@@ -34,30 +34,23 @@ export default function AudioFeedback() {
     setResult('');
     setError('');
     try {
-      // Audio file is referenced by name only — LLM doesn't support audio file_urls
+      let fileUrl = null;
+      if (file) {
+        setUploading(true);
+        const uploaded = await base44.integrations.Core.UploadFile({ file });
+        fileUrl = uploaded.file_url;
+        setUploading(false);
+      }
 
-      const focusAreas = aspects.length > 0 ? aspects.join(', ') : 'all aspects';
-
-      const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. A musician wants professional, honest, and detailed feedback on their music.
-
-Track name: ${file ? file.name : 'Not provided'}
-Focus areas requested: ${focusAreas}
-Additional notes from the artist: ${notes || 'None provided'}
-
-Based on the track name, focus areas, and any notes provided, give your best professional feedback covering:
-1. A thoughtful overall impression
-2. Detailed feedback on each requested aspect (composition, arrangement, mixing, sound design, melody/harmony, rhythm, dynamics, emotional impact)
-3. Specific, actionable suggestions for improvement
-4. What elements are likely working well
-5. A short encouraging closing note
-
-Be honest, specific, and genuinely helpful. If limited info is provided, reason from the track name and genre context.`;
-
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        model: tier === 'advanced' ? 'gemini_3_pro' : 'gemini_3_flash',
+      const res = await base44.functions.invoke('analyzeAudio', {
+        fileUrl,
+        fileName: file?.name,
+        notes,
+        aspects,
+        tier,
       });
-      setResult(res);
+
+      setResult(res.data.feedback);
     } catch (e) {
       setError(e?.message || String(e));
     } finally {
@@ -76,7 +69,7 @@ Be honest, specific, and genuinely helpful. If limited info is provided, reason 
     setFile(null); setNotes(''); setAspects([]); setResult(''); setError('');
   };
 
-  const loadingMessage = tier === 'advanced' ? 'Deep analysis with Gemini Pro…' : 'Analyzing your track with Gemini…';
+  const loadingMessage = uploading ? 'Uploading audio…' : tier === 'advanced' ? 'Deep analysis with Gemini Pro…' : 'Analyzing your track with Gemini…';
 
   return (
     <Layout>
