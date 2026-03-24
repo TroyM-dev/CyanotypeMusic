@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mic2, Upload, X, Copy, Check, RotateCcw, Zap, Crown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../components/Layout';
@@ -16,6 +17,7 @@ export default function AudioFeedback() {
   const [uploading, setUploading] = useState(false);
   const [tier, setTier] = useState('base');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
   const inputRef = useRef();
 
   const toggleAspect = (a) => setAspects(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
@@ -51,7 +53,15 @@ export default function AudioFeedback() {
         tier,
       });
 
-      setResult(res.data.feedback);
+      const saved = await base44.entities.AudioFeedbackRecord.create({
+        file_name: file?.name || 'Audio Feedback',
+        feedback: res.data.feedback,
+        tier,
+        aspects,
+        notes,
+      });
+
+      navigate(`/audio-feedback/${saved.id}`);
     } catch (e) {
       setError(e?.message || String(e));
     } finally {
