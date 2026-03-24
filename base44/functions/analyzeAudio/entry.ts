@@ -78,7 +78,7 @@ Be honest, specific, and genuinely helpful. Reference specific moments or elemen
           }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 8192,
           }
         })
       }
