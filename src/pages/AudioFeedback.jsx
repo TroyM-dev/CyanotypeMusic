@@ -34,13 +34,7 @@ export default function AudioFeedback() {
     setResult('');
     setError('');
     try {
-      let fileUrl = null;
-      if (file) {
-        setUploading(true);
-        const uploaded = await base44.integrations.Core.UploadFile({ file });
-        fileUrl = uploaded.file_url;
-        setUploading(false);
-      }
+      // Audio file is referenced by name only — LLM doesn't support audio file_urls
 
       const focusAreas = aspects.length > 0 ? aspects.join(', ') : 'all aspects';
 
