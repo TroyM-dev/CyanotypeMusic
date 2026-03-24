@@ -60,7 +60,6 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
 
       const res = await base44.integrations.Core.InvokeLLM({
         prompt,
-        file_urls: fileUrl ? [fileUrl] : undefined,
         model: tier === 'advanced' ? 'gemini_3_pro' : 'gemini_3_flash',
       });
       setResult(res);
