@@ -64,7 +64,7 @@ Please provide detailed feedback covering:
 Be honest, specific, and genuinely helpful. Reference specific moments or elements you notice in the audio.`;
 
     const genRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
