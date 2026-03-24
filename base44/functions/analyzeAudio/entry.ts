@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODEL = 'gemini-1.5-flash-latest';
 
 Deno.serve(async (req) => {
   try {
@@ -64,7 +64,7 @@ Please provide detailed feedback covering:
 Be honest, specific, and genuinely helpful. Reference specific moments or elements you notice in the audio.`;
 
     const genRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
