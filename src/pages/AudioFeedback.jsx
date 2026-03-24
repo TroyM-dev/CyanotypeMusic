@@ -31,24 +31,35 @@ export default function AudioFeedback() {
     setLoading(true);
     setResult('');
 
+    let fileUrl = null;
+    if (file) {
+      setUploading(true);
+      const uploaded = await base44.integrations.Core.UploadFile({ file });
+      fileUrl = uploaded.file_url;
+      setUploading(false);
+    }
+
     const focusAreas = aspects.length > 0 ? aspects.join(', ') : 'all aspects';
 
     const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. A musician wants professional, honest, and detailed feedback on their music.
 
 Focus areas requested: ${focusAreas}
 Additional notes from the artist: ${notes || 'None provided'}
-${file ? `The artist has uploaded a file named "${file.name}" (${(file.size / 1024 / 1024).toFixed(2)} MB).` : 'No audio was uploaded.'}
 
-Please provide:
-1. A brief overall impression based on the context provided
+Please listen carefully to the uploaded audio and provide:
+1. A brief overall impression of the track
 2. Detailed feedback on each requested aspect (composition, arrangement, mixing, sound design, melody/harmony, rhythm, dynamics, emotional impact — cover whichever are relevant)
 3. Specific, actionable suggestions for improvement
-4. What's likely working well and should be kept
+4. What's working well and should be kept
 5. A short encouraging closing note
 
-Be honest, specific, technical where appropriate, and genuinely helpful. Avoid generic advice — be as precise as possible given the information available.`;
+Be honest, specific, technical where appropriate, and genuinely helpful. Avoid generic advice — be as precise as possible.`;
 
-    const res = await base44.integrations.Core.InvokeLLM({ prompt });
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      file_urls: fileUrl ? [fileUrl] : undefined,
+      model: 'gemini_3_flash',
+    });
     setResult(res);
     setLoading(false);
   };
@@ -63,7 +74,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
     setFile(null); setNotes(''); setAspects([]); setResult('');
   };
 
-  const loadingMessage = 'Analyzing your track…';
+  const loadingMessage = uploading ? 'Uploading audio…' : 'Analyzing your track with Gemini…';
 
   return (
     <Layout>
