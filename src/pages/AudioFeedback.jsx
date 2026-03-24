@@ -14,6 +14,7 @@ export default function AudioFeedback() {
   const [copied, setCopied] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [tier, setTier] = useState('base');
+  const [error, setError] = useState('');
   const inputRef = useRef();
 
   const toggleAspect = (a) => setAspects(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
@@ -31,6 +32,7 @@ export default function AudioFeedback() {
   const analyze = async () => {
     setLoading(true);
     setResult('');
+    setError('');
     try {
       let fileUrl = null;
       if (file) {
@@ -62,6 +64,8 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
         model: tier === 'advanced' ? 'gemini_3_pro' : 'gemini_3_flash',
       });
       setResult(res);
+    } catch (e) {
+      setError(e?.message || String(e));
     } finally {
       setLoading(false);
       setUploading(false);
@@ -75,7 +79,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
   };
 
   const reset = () => {
-    setFile(null); setNotes(''); setAspects([]); setResult('');
+    setFile(null); setNotes(''); setAspects([]); setResult(''); setError('');
   };
 
   const loadingMessage = uploading ? 'Uploading audio…' : tier === 'advanced' ? 'Deep analysis with Gemini Pro…' : 'Analyzing your track with Gemini…';
@@ -191,6 +195,13 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
             <>{tier === 'advanced' ? <Crown className="w-4 h-4" /> : <Mic2 className="w-4 h-4" />}Analyze Track</>
           )}
         </button>
+
+        {/* Error */}
+        {error && (
+          <div className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+            <p className="text-sm text-red-500 font-medium">Error: {error}</p>
+          </div>
+        )}
 
         {/* Result */}
         {result && (
