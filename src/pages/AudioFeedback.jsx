@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Mic2, Upload, X, Copy, Check, RotateCcw } from 'lucide-react';
+import { Mic2, Upload, X, Copy, Check, RotateCcw, Zap, Crown } from 'lucide-react';
 import Layout from '../components/Layout';
 import { base44 } from '@/api/base44Client';
 
@@ -13,6 +13,7 @@ export default function AudioFeedback() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [tier, setTier] = useState('base');
   const inputRef = useRef();
 
   const toggleAspect = (a) => setAspects(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
@@ -58,7 +59,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
       file_urls: fileUrl ? [fileUrl] : undefined,
-      model: 'gemini_3_flash',
+      model: tier === 'advanced' ? 'gemini_3_pro' : 'gemini_3_flash',
     });
     setResult(res);
     setLoading(false);
@@ -74,7 +75,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
     setFile(null); setNotes(''); setAspects([]); setResult('');
   };
 
-  const loadingMessage = uploading ? 'Uploading audio…' : 'Analyzing your track with Gemini…';
+  const loadingMessage = uploading ? 'Uploading audio…' : tier === 'advanced' ? 'Deep analysis with Gemini Pro…' : 'Analyzing your track with Gemini…';
 
   return (
     <Layout>
@@ -140,6 +141,35 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
           </div>
         </div>
 
+        {/* Analysis Tier */}
+        <div className="mb-5">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Analysis Tier</label>
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={() => setTier('base')}
+              className={`flex flex-col gap-1.5 p-4 rounded-xl border transition-all text-left ${
+                tier === 'base' ? 'border-teal-500/50 bg-teal-500/10' : 'border-border/60 hover:border-border bg-card'
+              }`}>
+              <div className="flex items-center gap-2">
+                <Zap className={`w-4 h-4 ${tier === 'base' ? 'text-teal-500' : 'text-muted-foreground'}`} />
+                <span className={`text-sm font-semibold ${tier === 'base' ? 'text-teal-500' : 'text-foreground'}`}>Base</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-snug">Fast, solid feedback on your track. Great for quick iterative reviews.</p>
+              <span className="text-xs font-medium text-muted-foreground/60 mt-1">Gemini Flash · Standard credits</span>
+            </button>
+            <button onClick={() => setTier('advanced')}
+              className={`flex flex-col gap-1.5 p-4 rounded-xl border transition-all text-left ${
+                tier === 'advanced' ? 'border-purple-500/50 bg-purple-500/10' : 'border-border/60 hover:border-border bg-card'
+              }`}>
+              <div className="flex items-center gap-2">
+                <Crown className={`w-4 h-4 ${tier === 'advanced' ? 'text-purple-400' : 'text-muted-foreground'}`} />
+                <span className={`text-sm font-semibold ${tier === 'advanced' ? 'text-purple-400' : 'text-foreground'}`}>Advanced</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-snug">Deep, nuanced analysis with richer musical understanding and more precise insights.</p>
+              <span className="text-xs font-medium text-purple-400/70 mt-1">Gemini Pro · Uses more credits</span>
+            </button>
+          </div>
+        </div>
+
         {/* Notes */}
         <div className="mb-6">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Notes for the AI</label>
@@ -149,11 +179,14 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
         </div>
 
         <button onClick={analyze} disabled={(!file && !notes) || loading}
+          className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 rounded-xl transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed ${
+            tier === 'advanced' ? 'bg-purple-600 text-white' : 'bg-primary text-primary-foreground'
+          }`}>
           className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3.5 rounded-xl transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed">
           {loading ? (
             <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />{loadingMessage}</>
           ) : (
-            <><Mic2 className="w-4 h-4" />Analyze Track</>
+            <>{tier === 'advanced' ? <Crown className="w-4 h-4" /> : <Mic2 className="w-4 h-4" />}{tier === 'advanced' ? 'Deep Analyze Track' : 'Analyze Track'}</>
           )}
         </button>
 
@@ -161,7 +194,9 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
         {result && (
           <div className="mt-8 rounded-2xl border border-teal-500/20 bg-teal-500/5 p-6">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-medium text-teal-500 uppercase tracking-wider">AI Feedback</span>
+              <span className={`text-xs font-medium uppercase tracking-wider ${tier === 'advanced' ? 'text-purple-400' : 'text-teal-500'}`}>
+                {tier === 'advanced' ? '✦ Advanced AI Feedback' : 'AI Feedback'}
+              </span>
               <div className="flex gap-2">
                 <button onClick={reset}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground border border-border/60 hover:border-border transition-all">
