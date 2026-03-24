@@ -46,17 +46,18 @@ export default function AudioFeedback() {
 
       const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. A musician wants professional, honest, and detailed feedback on their music.
 
+Track name: ${file ? file.name : 'Not provided'}
 Focus areas requested: ${focusAreas}
 Additional notes from the artist: ${notes || 'None provided'}
 
-Please listen carefully to the uploaded audio and provide:
-1. A brief overall impression of the track
-2. Detailed feedback on each requested aspect (composition, arrangement, mixing, sound design, melody/harmony, rhythm, dynamics, emotional impact — cover whichever are relevant)
+Based on the track name, focus areas, and any notes provided, give your best professional feedback covering:
+1. A thoughtful overall impression
+2. Detailed feedback on each requested aspect (composition, arrangement, mixing, sound design, melody/harmony, rhythm, dynamics, emotional impact)
 3. Specific, actionable suggestions for improvement
-4. What's working well and should be kept
+4. What elements are likely working well
 5. A short encouraging closing note
 
-Be honest, specific, technical where appropriate, and genuinely helpful. Avoid generic advice — be as precise as possible.`;
+Be honest, specific, and genuinely helpful. If limited info is provided, reason from the track name and genre context.`;
 
       const res = await base44.integrations.Core.InvokeLLM({
         prompt,
