@@ -186,7 +186,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
           {loading ? (
             <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />{loadingMessage}</>
           ) : (
-            <>{tier === 'advanced' ? <Crown className="w-4 h-4" /> : <Mic2 className="w-4 h-4" />}{tier === 'advanced' ? 'Deep Analyze Track' : 'Analyze Track'}</>
+            <>{tier === 'advanced' ? <Crown className="w-4 h-4" /> : <Mic2 className="w-4 h-4" />}Analyze Track</>
           )}
         </button>
 
