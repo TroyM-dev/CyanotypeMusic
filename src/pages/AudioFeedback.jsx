@@ -20,10 +20,7 @@ export default function AudioFeedback() {
   const toggleAspect = (a) => setAspects(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
 
   const handleFile = (f) => {
-    if (!f) return;
-    const isAudio = f.type.startsWith('audio/') || /\.(mp3|wav|flac|aac|ogg|m4a|aiff|wma)$/i.test(f.name);
-    if (isAudio) setFile(f);
-    else setError('Unsupported file type. Please upload an audio file (MP3, WAV, FLAC, AAC, etc.).');
+    if (f && f.type.startsWith('audio/')) setFile(f);
   };
 
   const handleDrop = (e) => {
