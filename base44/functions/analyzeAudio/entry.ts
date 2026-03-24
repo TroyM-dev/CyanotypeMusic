@@ -10,6 +10,7 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { fileUrl, fileName, notes, aspects, tier } = await req.json();
+    const GEMINI_MODEL = tier === 'advanced' ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
 
     if (!fileUrl) return Response.json({ error: 'No file URL provided' }, { status: 400 });
 
@@ -76,7 +77,7 @@ Be honest, specific, and genuinely helpful. Reference specific moments or elemen
             ]
           }],
           generationConfig: {
-            temperature: tier === 'advanced' ? 0.7 : 0.5,
+            temperature: 0.7,
             maxOutputTokens: 2048,
           }
         })
