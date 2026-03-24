@@ -31,18 +31,18 @@ export default function AudioFeedback() {
   const analyze = async () => {
     setLoading(true);
     setResult('');
+    try {
+      let fileUrl = null;
+      if (file) {
+        setUploading(true);
+        const uploaded = await base44.integrations.Core.UploadFile({ file });
+        fileUrl = uploaded.file_url;
+        setUploading(false);
+      }
 
-    let fileUrl = null;
-    if (file) {
-      setUploading(true);
-      const uploaded = await base44.integrations.Core.UploadFile({ file });
-      fileUrl = uploaded.file_url;
-      setUploading(false);
-    }
+      const focusAreas = aspects.length > 0 ? aspects.join(', ') : 'all aspects';
 
-    const focusAreas = aspects.length > 0 ? aspects.join(', ') : 'all aspects';
-
-    const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. A musician wants professional, honest, and detailed feedback on their music.
+      const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. A musician wants professional, honest, and detailed feedback on their music.
 
 Focus areas requested: ${focusAreas}
 Additional notes from the artist: ${notes || 'None provided'}
@@ -56,17 +56,16 @@ Please listen carefully to the uploaded audio and provide:
 
 Be honest, specific, technical where appropriate, and genuinely helpful. Avoid generic advice — be as precise as possible.`;
 
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt,
-      file_urls: fileUrl ? [fileUrl] : undefined,
-      model: tier === 'advanced' ? 'gemini_3_pro' : 'gemini_3_flash',
-    });
-    setResult(res);
-    setLoading(false);
-  } catch (e) {
-    setLoading(false);
-    throw e;
-  }
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        file_urls: fileUrl ? [fileUrl] : undefined,
+        model: tier === 'advanced' ? 'gemini_3_pro' : 'gemini_3_flash',
+      });
+      setResult(res);
+    } finally {
+      setLoading(false);
+      setUploading(false);
+    }
   };
 
   const copy = () => {
