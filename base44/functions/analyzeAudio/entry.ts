@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-const GEMINI_MODEL = 'gemini-2.5-flash-preview-04-17';
+const GEMINI_MODEL = 'gemini-1.5-flash';
 
 Deno.serve(async (req) => {
   try {
