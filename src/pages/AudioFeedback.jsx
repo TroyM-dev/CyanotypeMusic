@@ -63,6 +63,10 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
     });
     setResult(res);
     setLoading(false);
+  } catch (e) {
+    setLoading(false);
+    throw e;
+  }
   };
 
   const copy = () => {
