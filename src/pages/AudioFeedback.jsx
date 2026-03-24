@@ -85,7 +85,7 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
           <div className="flex items-center gap-3 mb-3">
             <div className="w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center">
               <Mic2 className="w-5 h-5 text-teal-500" />
-          </div>
+            </div>
             <h1 className="text-2xl font-bold tracking-tight">Audio Feedback</h1>
           </div>
           <p className="text-muted-foreground text-sm">Upload your track and get deep, professional-grade feedback on every aspect of your music.</p>
@@ -182,7 +182,6 @@ Be honest, specific, technical where appropriate, and genuinely helpful. Avoid g
           className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 rounded-xl transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed ${
             tier === 'advanced' ? 'bg-purple-600 text-white' : 'bg-primary text-primary-foreground'
           }`}>
-          className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3.5 rounded-xl transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed">
           {loading ? (
             <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />{loadingMessage}</>
           ) : (
