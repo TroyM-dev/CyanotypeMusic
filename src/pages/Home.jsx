@@ -35,7 +35,7 @@ export default function Home() {
           Let AI Power Your Creativity
         </div>
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-5 leading-tight">
-          You Create,<br />
+          You Create<br />
           <span className="text-primary">We Listen</span>
         </h1>
         <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
