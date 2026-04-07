@@ -18,6 +18,8 @@ export default function AudioFeedback() {
   const [aspects, setAspects] = useState([]);
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [tier, setTier] = useState('base');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const inputRef = useRef();
