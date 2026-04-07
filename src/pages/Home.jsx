@@ -35,11 +35,11 @@ export default function Home() {
           AI-Powered Music Intelligence
         </div>
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-5 leading-tight">
-          Your AI Creative<br />
-          <span className="text-primary">Music Partner</span>
+          You Create,<br />
+          <span className="text-primary">We Listen</span>
         </h1>
         <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
-          Generate deeply detailed music prompts or get professional-grade feedback on your audio — powered by advanced AI that understands music.
+          AI-powered prompts and feedback designed to support your creative process — not direct it. Take what resonates, leave what doesn't. Your music, your call.
         </p>
       </div>
 
