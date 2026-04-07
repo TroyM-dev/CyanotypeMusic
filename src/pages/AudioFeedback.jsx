@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mic2, Upload, X, Copy, Check, RotateCcw, Zap, Crown } from 'lucide-react';
+import { audioFileStore } from '../lib/audioFileStore';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../components/Layout';
 import { base44 } from '@/api/base44Client';
@@ -8,7 +9,11 @@ import { base44 } from '@/api/base44Client';
 const FEEDBACK_ASPECTS = ['Overall Composition', 'Arrangement', 'Mixing & Levels', 'Sound Design', 'Melody & Harmony', 'Rhythm & Groove', 'Dynamics', 'Emotional Impact'];
 
 export default function AudioFeedback() {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(() => {
+    const f = audioFileStore.get();
+    audioFileStore.clear();
+    return f;
+  });
   const [notes, setNotes] = useState('');
   const [aspects, setAspects] = useState([]);
   const [result, setResult] = useState('');

@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { audioFileStore } from '../lib/audioFileStore';
 import { Sparkles, Mic2, ArrowRight } from 'lucide-react';
 import Layout from '../components/Layout';
 
@@ -22,10 +23,21 @@ const features = [
     gradient: 'from-teal-500/10 to-cyan-500/5',
     accent: 'text-teal-500',
     border: 'hover:border-teal-500/40',
+    isAudio: true,
   },
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
+
+  const handleAudioDrop = (e) => {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('audio/')) {
+      audioFileStore.set(f);
+      navigate('/audio-feedback');
+    }
+  };
   return (
     <Layout>
       {/* Hero */}
@@ -45,22 +57,48 @@ export default function Home() {
 
       {/* Feature Cards */}
       <div className="grid sm:grid-cols-2 gap-6">
-        {features.map(({ icon: Icon, label, description, href, cta, gradient, accent, border }) => (
-          <Link
-            key={href}
-            to={href}
-            className={`group relative rounded-2xl border border-border/60 bg-gradient-to-br ${gradient} p-8 transition-all duration-300 ${border} hover:shadow-2xl hover:shadow-black/30 hover:-translate-y-1`}
-          >
-            <div className={`w-12 h-12 rounded-xl border border-border/60 bg-card flex items-center justify-center mb-5 ${accent}`}>
-              <Icon className="w-6 h-6" />
+        {features.map(({ icon: Icon, label, description, href, cta, gradient, accent, border, isAudio }) => (
+          isAudio ? (
+            <div
+              key={href}
+              onDrop={handleAudioDrop}
+              onDragOver={e => e.preventDefault()}
+              className={`group relative rounded-2xl border border-border/60 bg-gradient-to-br ${gradient} p-8 transition-all duration-300 ${border} hover:shadow-2xl hover:shadow-black/30 hover:-translate-y-1`}
+            >
+              <Link to={href} className="block">
+                <div className={`w-12 h-12 rounded-xl border border-border/60 bg-card flex items-center justify-center mb-5 ${accent}`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h2 className="text-xl font-semibold mb-3 text-foreground">{label}</h2>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-4">{description}</p>
+              </Link>
+              <div className="rounded-xl border-2 border-dashed border-teal-500/30 bg-teal-500/5 flex flex-col items-center justify-center py-4 gap-1.5 mb-4 cursor-pointer hover:border-teal-500/60 hover:bg-teal-500/10 transition-all"
+                onClick={() => navigate(href)}>
+                <Mic2 className="w-5 h-5 text-teal-500/60" />
+                <p className="text-xs text-teal-600/70 font-medium">Drop audio here to start</p>
+              </div>
+              <Link to={href} className={`flex items-center gap-2 text-sm font-medium ${accent}`}>
+                {cta}
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
             </div>
-            <h2 className="text-xl font-semibold mb-3 text-foreground">{label}</h2>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6">{description}</p>
-            <div className={`flex items-center gap-2 text-sm font-medium ${accent}`}>
-              {cta}
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </div>
-          </Link>
+          ) : (
+            <Link
+              key={href}
+              to={href}
+              className={`group relative rounded-2xl border border-border/60 bg-gradient-to-br ${gradient} p-8 transition-all duration-300 ${border} hover:shadow-2xl hover:shadow-black/30 hover:-translate-y-1`}
+            >
+              <div className={`w-12 h-12 rounded-xl border border-border/60 bg-card flex items-center justify-center mb-5 ${accent}`}>
+                <Icon className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-semibold mb-3 text-foreground">{label}</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6">{description}</p>
+              <div className={`flex items-center gap-2 text-sm font-medium ${accent}`}>
+                {cta}
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </div>
+            </Link>
+          )
         ))}
       </div>
 
