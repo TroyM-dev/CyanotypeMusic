@@ -5,16 +5,6 @@ import Layout from '../components/Layout';
 
 const features = [
   {
-    icon: Sparkles,
-    label: 'Prompt Generator',
-    description: 'Describe your musical vision — genre, mood, instruments, tempo, references — and get a rich, detailed prompt ready to use with any AI music tool or as a creative brief for your next session.',
-    href: '/prompt-generator',
-    cta: 'Generate a Prompt',
-    gradient: 'from-amber-500/10 to-orange-500/5',
-    accent: 'text-amber-400',
-    border: 'hover:border-amber-500/40',
-  },
-  {
     icon: Mic2,
     label: 'Audio Feedback',
     description: 'Upload a track or demo and receive deep, detailed AI feedback on your composition, arrangement, mixing, dynamics, and more — like having a seasoned producer listen alongside you.',
@@ -24,6 +14,16 @@ const features = [
     accent: 'text-teal-500',
     border: 'hover:border-teal-500/40',
     isAudio: true,
+  },
+  {
+    icon: Sparkles,
+    label: 'Prompt Generator',
+    description: 'Describe your musical vision — genre, mood, instruments, tempo, references — and get a rich, detailed prompt ready to use with any AI music tool or as a creative brief for your next session.',
+    href: '/prompt-generator',
+    cta: 'Generate a Prompt',
+    gradient: 'from-amber-500/10 to-orange-500/5',
+    accent: 'text-amber-400',
+    border: 'hover:border-amber-500/40',
   },
 ];
 
@@ -56,7 +56,7 @@ export default function Home() {
       </div>
 
       {/* Feature Cards */}
-      <div className="grid sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {features.map(({ icon: Icon, label, description, href, cta, gradient, accent, border, isAudio }) => (
           isAudio ? (
             <div
