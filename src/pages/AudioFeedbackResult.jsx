@@ -13,10 +13,16 @@ export default function AudioFeedbackResult() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.AudioFeedbackRecord.get(id).then(r => {
-      setRecord(r);
+    if (!id || id === ':id') {
       setLoading(false);
-    });
+      return;
+    }
+    base44.entities.AudioFeedbackRecord.get(id)
+      .then(r => {
+        setRecord(r);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [id]);
 
   const copy = () => {
