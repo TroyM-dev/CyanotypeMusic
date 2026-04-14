@@ -44,7 +44,7 @@ export default function Home() {
       <div className="text-center mb-16 pt-8">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow inline-block"></span>
-          Let AI Power Your Creativity
+          Let AI Support Your Creativity
         </div>
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-5 leading-tight">
           You Create<br />
