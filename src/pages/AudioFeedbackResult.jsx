@@ -107,18 +107,18 @@ export default function AudioFeedbackResult() {
         }`}>
           <ReactMarkdown
             className={`prose prose-invert max-w-none
-              prose-headings:font-bold
-              prose-h1:text-3xl prose-h1:mb-4 prose-h1:mt-0
-              prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-6
-              prose-p:text-foreground/85 prose-p:leading-relaxed prose-p:my-3
+              prose-headings:font-extrabold
+              prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-0
+              prose-h3:text-2xl prose-h3:font-extrabold prose-h3:mb-4 prose-h3:mt-10
+              prose-p:text-foreground/85 prose-p:leading-relaxed prose-p:my-4
               prose-strong:text-foreground prose-strong:font-semibold
-              prose-ul:my-3 prose-li:my-1.5 prose-li:text-foreground/85
+              prose-ul:my-4 prose-li:my-2 prose-li:text-foreground/85
               ${isAdvanced ? 'prose-headings:text-purple-300' : 'prose-headings:text-teal-300'}`}
             components={{
               h2: ({ children }) => (
-                <div className="mt-10 mb-4">
-                  <div className="border-t border-border/40 mb-6" />
-                  <h2 className={`text-2xl font-bold ${isAdvanced ? 'text-purple-300' : 'text-teal-300'}`}>{children}</h2>
+                <div className="mt-14 mb-6">
+                  <div className="border-t border-border/40 mb-8" />
+                  <h2 className={`text-3xl font-extrabold ${isAdvanced ? 'text-purple-300' : 'text-teal-300'}`}>{children}</h2>
                 </div>
               ),
             }}
