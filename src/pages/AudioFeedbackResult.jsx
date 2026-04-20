@@ -110,9 +110,9 @@ export default function AudioFeedbackResult() {
               prose-headings:font-extrabold
               prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-0
               prose-h3:text-2xl prose-h3:font-extrabold prose-h3:mb-4 prose-h3:mt-10
-              prose-p:text-foreground/85 prose-p:leading-relaxed prose-p:my-4
+              prose-p:text-foreground/85 prose-p:leading-loose prose-p:my-6
               prose-strong:text-foreground prose-strong:font-semibold
-              prose-ul:my-4 prose-li:my-2 prose-li:text-foreground/85
+              prose-ul:my-6 prose-li:my-3 prose-li:text-foreground/85 prose-li:leading-loose
               ${isAdvanced ? 'prose-headings:text-purple-300' : 'prose-headings:text-teal-300'}`}
             components={{
               h2: ({ children }) => (
