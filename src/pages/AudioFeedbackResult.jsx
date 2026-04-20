@@ -121,6 +121,15 @@ export default function AudioFeedbackResult() {
                   <h2 className={`text-3xl font-extrabold ${isAdvanced ? 'text-purple-300' : 'text-teal-300'}`}>{children}</h2>
                 </div>
               ),
+              h3: ({ children }) => (
+                <h3 className={`text-2xl font-extrabold mt-10 mb-4 ${isAdvanced ? 'text-purple-300' : 'text-teal-300'}`}>{children}</h3>
+              ),
+              p: ({ children }) => (
+                <p className="text-foreground/85 my-5" style={{ lineHeight: '2' }}>{children}</p>
+              ),
+              li: ({ children }) => (
+                <li className="text-foreground/85 my-3" style={{ lineHeight: '2' }}>{children}</li>
+              ),
             }}
           >
             {record.feedback}
