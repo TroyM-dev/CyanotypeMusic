@@ -1,7 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-// Model is selected per-request based on tier
 
 Deno.serve(async (req) => {
   try {
@@ -12,44 +11,43 @@ Deno.serve(async (req) => {
     const { fileUrl, fileName, notes, aspects, tier } = await req.json();
     const GEMINI_MODEL = tier === 'advanced' ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
 
-    if (!fileUrl) return Response.json({ error: 'No file URL provided' }, { status: 400 });
-
-    // Step 1: Fetch the audio file as a stream
-    const audioRes = await fetch(fileUrl);
-    if (!audioRes.ok) return Response.json({ error: 'Failed to fetch audio file' }, { status: 500 });
-
-    const mimeType = audioRes.headers.get('content-type') || 'audio/mpeg';
-    const fileSize = audioRes.headers.get('content-length');
-
-    // Step 2: Upload to Gemini Files API (streams directly, no base64 in memory)
-    const uploadRes = await fetch(
-      `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'X-Goog-Upload-Protocol': 'raw',
-          'X-Goog-Upload-Header-Content-Type': mimeType,
-          ...(fileSize ? { 'X-Goog-Upload-Header-Content-Length': fileSize } : {}),
-          'Content-Type': mimeType,
-        },
-        body: audioRes.body,
-        duplex: 'half',
-      }
-    );
-
-    if (!uploadRes.ok) {
-      const err = await uploadRes.text();
-      return Response.json({ error: `File upload failed: ${err}` }, { status: 500 });
-    }
-
-    const uploadData = await uploadRes.json();
-    const fileUri = uploadData.file?.uri;
-    if (!fileUri) return Response.json({ error: 'No file URI returned from Gemini' }, { status: 500 });
-
-    // Step 3: Generate feedback using the uploaded file
     const focusAreas = aspects && aspects.length > 0 ? aspects.join(', ') : 'all aspects';
 
-    const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. Listen carefully to this audio track and provide professional, honest, and detailed feedback.
+    let parts = [];
+
+    if (fileUrl) {
+      // Fetch and upload the audio file to Gemini Files API
+      const audioRes = await fetch(fileUrl);
+      if (!audioRes.ok) return Response.json({ error: 'Failed to fetch audio file' }, { status: 500 });
+
+      const mimeType = audioRes.headers.get('content-type') || 'audio/mpeg';
+      const fileSize = audioRes.headers.get('content-length');
+
+      const uploadRes = await fetch(
+        `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Goog-Upload-Protocol': 'raw',
+            'X-Goog-Upload-Header-Content-Type': mimeType,
+            ...(fileSize ? { 'X-Goog-Upload-Header-Content-Length': fileSize } : {}),
+            'Content-Type': mimeType,
+          },
+          body: audioRes.body,
+          duplex: 'half',
+        }
+      );
+
+      if (!uploadRes.ok) {
+        const err = await uploadRes.text();
+        return Response.json({ error: `File upload failed: ${err}` }, { status: 500 });
+      }
+
+      const uploadData = await uploadRes.json();
+      const fileUri = uploadData.file?.uri;
+      if (!fileUri) return Response.json({ error: 'No file URI returned from Gemini' }, { status: 500 });
+
+      const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. Listen carefully to this audio track and provide professional, honest, and detailed feedback.
 
 Track name: ${fileName || 'Not provided'}
 Focus areas requested: ${focusAreas}
@@ -64,18 +62,29 @@ Please provide detailed feedback covering:
 
 Be honest, specific, and genuinely helpful. Reference specific moments or elements you notice in the audio.`;
 
+      parts = [
+        { text: prompt },
+        { file_data: { mime_type: mimeType, file_uri: fileUri } }
+      ];
+    } else {
+      // Notes-only mode: no audio file provided
+      const prompt = `You are an experienced music producer, mixing engineer, and creative director with decades of experience across many genres. An artist has shared notes about their music project and is looking for professional guidance and feedback.
+
+Focus areas requested: ${focusAreas}
+Artist's notes: ${notes}
+
+Based on the artist's description, provide thoughtful, professional feedback and actionable suggestions covering the focus areas they've mentioned. Be specific, encouraging, and genuinely helpful.`;
+
+      parts = [{ text: prompt }];
+    }
+
     const genRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: prompt },
-              { file_data: { mime_type: mimeType, file_uri: fileUri } }
-            ]
-          }],
+          contents: [{ parts }],
           generationConfig: {
             temperature: 0.7,
             maxOutputTokens: 8192,
