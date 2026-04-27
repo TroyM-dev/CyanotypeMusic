@@ -1,10 +1,16 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Music2, Mic2, Sparkles, History } from 'lucide-react';
+import { Mic2, Sparkles, History, LogOut, User } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useState, useEffect } from 'react';
 
 export default function Layout({ children }) {
   const location = useLocation();
+  const [user, setUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => setUser(null));
+  }, []);
 
   const navLinks = [
     { to: '/prompt-generator', label: 'Prompt Generator', icon: Sparkles },
@@ -36,11 +42,36 @@ export default function Layout({ children }) {
                 <span className="hidden sm:inline">{label}</span>
               </Link>
             ))}
-            <button
-              onClick={() => base44.auth.redirectToLogin()}
-              className="ml-2 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-all">
-              Sign In
-            </button>
+            {user ? (
+              <div className="relative ml-2" onMouseEnter={() => setDropdownOpen(true)} onMouseLeave={() => setDropdownOpen(false)}>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary cursor-pointer hover:bg-secondary/80 transition-all">
+                  <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
+                    {user.full_name?.[0]?.toUpperCase() || <User className="w-3 h-3" />}
+                  </div>
+                  <span className="hidden sm:inline text-sm font-medium text-foreground">{user.full_name || user.email}</span>
+                </div>
+                {dropdownOpen && (
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-card border border-border/60 rounded-xl shadow-lg py-1 z-50">
+                    <div className="px-3 py-2 border-b border-border/40">
+                      <p className="text-xs font-medium text-foreground truncate">{user.full_name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                    <button
+                      onClick={() => base44.auth.logout()}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => base44.auth.redirectToLogin()}
+                className="ml-2 px-4 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground hover:opacity-90 transition-all">
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       </nav>
