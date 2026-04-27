@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FolderPlus, Folder, FolderOpen, Sparkles, Clock, ChevronRight, X, Plus, Inbox } from 'lucide-react';
+import { Sparkles, Clock, ChevronRight, X, Plus, Inbox, Mic2, Crown } from 'lucide-react';
 import Layout from '../components/Layout';
 import { base44 } from '@/api/base44Client';
 
@@ -9,19 +9,23 @@ const PROJECT_COLORS = ['#f59e0b', '#8b5cf6', '#10b981', '#3b82f6', '#ef4444', '
 export default function PromptHistory() {
   const [projects, setProjects] = useState([]);
   const [records, setRecords] = useState([]);
+  const [audioRecords, setAudioRecords] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null); // null = All
+  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'prompts' | 'audio'
   const [showNewProject, setShowNewProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectColor, setNewProjectColor] = useState(PROJECT_COLORS[0]);
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
-    const [projs, recs] = await Promise.all([
+    const [projs, recs, audioRecs] = await Promise.all([
       base44.entities.Project.list('-created_date'),
       base44.entities.PromptRecord.list('-created_date', 100),
+      base44.entities.AudioFeedbackRecord.list('-created_date', 100),
     ]);
     setProjects(projs);
     setRecords(recs);
+    setAudioRecords(audioRecs);
     setLoading(false);
   };
 
@@ -42,9 +46,20 @@ export default function PromptHistory() {
     load();
   };
 
-  const filteredRecords = selectedProject
+  const filteredPrompts = selectedProject
     ? records.filter(r => r.project_id === selectedProject)
     : records;
+
+  const filteredAudio = audioRecords; // audio records don't have projects
+
+  const allItems = [
+    ...filteredPrompts.map(r => ({ ...r, _type: 'prompt' })),
+    ...filteredAudio.map(r => ({ ...r, _type: 'audio' })),
+  ].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+
+  const displayItems = activeTab === 'prompts' ? filteredPrompts.map(r => ({ ...r, _type: 'prompt' }))
+    : activeTab === 'audio' ? filteredAudio.map(r => ({ ...r, _type: 'audio' }))
+    : allItems;
 
   const getProject = (id) => projects.find(p => p.id === id);
 
@@ -90,12 +105,12 @@ export default function PromptHistory() {
             </div>
           )}
 
-          {/* All prompts */}
+          {/* All items */}
           <button onClick={() => setSelectedProject(null)}
             className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all mb-1 ${selectedProject === null ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`}>
             <Inbox className="w-4 h-4 flex-shrink-0" />
-            <span className="flex-1 text-left truncate">All Prompts</span>
-            <span className="text-xs text-muted-foreground">{records.length}</span>
+            <span className="flex-1 text-left truncate">All History</span>
+            <span className="text-xs text-muted-foreground">{records.length + audioRecords.length}</span>
           </button>
 
           {/* Project list */}
@@ -117,29 +132,73 @@ export default function PromptHistory() {
           })}
         </aside>
 
-        {/* Main — Prompts list */}
+        {/* Main — History list */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold tracking-tight">
-              {selectedProject ? (getProject(selectedProject)?.name || 'Project') : 'All Prompts'}
+              {selectedProject ? (getProject(selectedProject)?.name || 'Project') : 'All History'}
             </h1>
-            <Link to="/prompt-generator"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-all">
-              <Sparkles className="w-4 h-4" /> New Prompt
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link to="/audio-feedback"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl border border-teal-500/40 text-teal-500 text-sm font-medium hover:bg-teal-500/10 transition-all">
+                <Mic2 className="w-4 h-4" /> New Feedback
+              </Link>
+              <Link to="/prompt-generator"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-all">
+                <Sparkles className="w-4 h-4" /> New Prompt
+              </Link>
+            </div>
           </div>
 
-          {filteredRecords.length === 0 ? (
+          {/* Tabs */}
+          <div className="flex gap-1 mb-4 p-1 bg-secondary rounded-xl w-fit">
+            {[['all', 'All'], ['prompts', 'Prompts'], ['audio', 'Audio Feedback']].map(([val, label]) => (
+              <button key={val} onClick={() => setActiveTab(val)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === val ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {displayItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <div className="w-14 h-14 rounded-2xl bg-secondary border border-border/60 flex items-center justify-center mb-4">
                 <Sparkles className="w-6 h-6 text-muted-foreground" />
               </div>
-              <p className="text-muted-foreground text-sm">No prompts yet.</p>
-              <Link to="/prompt-generator" className="mt-3 text-primary text-sm hover:underline">Generate your first prompt →</Link>
+              <p className="text-muted-foreground text-sm">Nothing here yet.</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {filteredRecords.map(rec => {
+              {displayItems.map(rec => {
+                if (rec._type === 'audio') {
+                  const isAdvanced = rec.tier === 'advanced';
+                  return (
+                    <Link key={rec.id} to={`/audio-feedback/${rec.id}`}
+                      className="group flex items-start gap-4 rounded-2xl border border-border/60 bg-card hover:border-teal-500/30 hover:bg-teal-500/5 p-5 transition-all duration-200">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${isAdvanced ? 'bg-purple-500/10 border border-purple-500/20' : 'bg-teal-500/10 border border-teal-500/20'}`}>
+                        {isAdvanced ? <Crown className="w-4 h-4 text-purple-400" /> : <Mic2 className="w-4 h-4 text-teal-500" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate mb-1">{rec.file_name || 'Audio Feedback'}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{rec.feedback?.slice(0, 120)}…</p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${isAdvanced ? 'bg-purple-500/10 text-purple-400' : 'bg-teal-500/10 text-teal-600'}`}>
+                            {isAdvanced ? 'Advanced' : 'Base'}
+                          </span>
+                          {rec.aspects?.slice(0, 2).map(a => (
+                            <span key={a} className="px-2 py-0.5 rounded-md bg-secondary text-xs text-muted-foreground">{a}</span>
+                          ))}
+                          <span className="flex items-center gap-1 text-xs text-muted-foreground ml-auto">
+                            <Clock className="w-3 h-3" />
+                            {new Date(rec.created_date).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-teal-400 transition-colors flex-shrink-0 mt-1" />
+                    </Link>
+                  );
+                }
+
                 const proj = rec.project_id ? getProject(rec.project_id) : null;
                 const tags = [rec.genre, rec.mood, rec.tempo].filter(Boolean);
                 return (
