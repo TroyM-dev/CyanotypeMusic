@@ -66,6 +66,8 @@ export default function AudioFeedback() {
       });
 
       navigate(`/audio-feedback/${saved.id}`);
+    } catch (err) {
+      setError(err?.response?.data?.error || err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
       setUploading(false);
