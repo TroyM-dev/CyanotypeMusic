@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, FolderOpen } from 'lucide-react';
 import Layout from '../components/Layout';
+import LoginPromptModal from '../components/LoginPromptModal';
 import { base44 } from '@/api/base44Client';
 
 const GENRES = ['Electronic', 'Hip-Hop', 'Jazz', 'Classical', 'Rock', 'Ambient', 'R&B', 'Folk', 'Metal', 'Pop', 'Experimental', 'World'];
@@ -20,6 +21,7 @@ export default function PromptGenerator() {
     purpose: '',
   });
   const [loading, setLoading] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState('');
 
@@ -32,6 +34,8 @@ export default function PromptGenerator() {
   const buildTitle = () => [form.genre, form.mood, form.purpose].filter(Boolean).join(' · ') || 'Generated Prompt';
 
   const generate = async () => {
+    const authed = await base44.auth.isAuthenticated();
+    if (!authed) { setShowLoginModal(true); return; }
     setLoading(true);
     const prompt = `You are an expert music producer and creative director. Based on the following directions, generate a richly detailed, actionable music production prompt that a musician or producer could use as a creative brief or feed into an AI music tool.
 
@@ -61,6 +65,7 @@ Generate a detailed, inspiring, and technically specific music prompt. Use markd
 
   return (
     <Layout>
+      <LoginPromptModal open={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">

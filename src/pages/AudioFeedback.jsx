@@ -4,6 +4,7 @@ import { Mic2, Upload, X, Copy, Check, RotateCcw, Zap, Crown } from 'lucide-reac
 import { audioFileStore } from '../lib/audioFileStore';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../components/Layout';
+import LoginPromptModal from '../components/LoginPromptModal';
 import { base44 } from '@/api/base44Client';
 
 const FEEDBACK_ASPECTS = ['Overall Composition', 'Arrangement', 'Mixing & Levels', 'Sound Design', 'Melody & Harmony', 'Rhythm & Groove', 'Dynamics', 'Emotional Impact'];
@@ -21,6 +22,7 @@ export default function AudioFeedback() {
   const [uploading, setUploading] = useState(false);
   const [tier, setTier] = useState('base');
   const [error, setError] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const navigate = useNavigate();
   const inputRef = useRef();
 
@@ -37,6 +39,8 @@ export default function AudioFeedback() {
   };
 
   const analyze = async () => {
+    const authed = await base44.auth.isAuthenticated();
+    if (!authed) { setShowLoginModal(true); return; }
     setLoading(true);
     setResult('');
     setError('');
@@ -82,6 +86,7 @@ export default function AudioFeedback() {
 
   return (
     <Layout>
+      <LoginPromptModal open={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
