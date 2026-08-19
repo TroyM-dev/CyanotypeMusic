@@ -1,0 +1,42 @@
+{
+  "name": "PromptRecord",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "project_id": {
+      "type": "string",
+      "title": "Project ID"
+    },
+    "result": {
+      "type": "string",
+      "title": "Generated Prompt"
+    },
+    "genre": {
+      "type": "string"
+    },
+    "mood": {
+      "type": "string"
+    },
+    "tempo": {
+      "type": "string"
+    },
+    "instruments": {
+      "type": "string"
+    },
+    "references": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "result"
+  ]
+}

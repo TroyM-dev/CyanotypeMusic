@@ -1,0 +1,32 @@
+{
+  "name": "AudioFeedbackRecord",
+  "type": "object",
+  "properties": {
+    "file_name": {
+      "type": "string",
+      "title": "File Name"
+    },
+    "feedback": {
+      "type": "string",
+      "title": "Feedback"
+    },
+    "tier": {
+      "type": "string",
+      "title": "Tier"
+    },
+    "aspects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Focus Areas"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "feedback"
+  ]
+}
